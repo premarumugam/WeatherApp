@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string-array name="city_array">
+        <item>Melbourne</item>
+        <item>Sydney</item>
+        <item>Wollongong</item>
+    </string-array>
 </resources>

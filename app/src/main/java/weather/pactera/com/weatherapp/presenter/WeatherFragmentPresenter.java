@@ -4,10 +4,7 @@ import android.util.Log;
 
 import java.util.Date;
 
-import javax.inject.Inject;
-
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -16,7 +13,16 @@ import weather.pactera.com.weatherapp.service.WeatherService;
 import weather.pactera.com.weatherapp.view.WeatherView;
 
 import static weather.pactera.com.weatherapp.Constants.API_KEY;
+import static weather.pactera.com.weatherapp.Constants.DEFAULT_ICON;
+import static weather.pactera.com.weatherapp.Constants.ICON_2;
+import static weather.pactera.com.weatherapp.Constants.ICON_3;
+import static weather.pactera.com.weatherapp.Constants.ICON_5;
+import static weather.pactera.com.weatherapp.Constants.ICON_6;
+import static weather.pactera.com.weatherapp.Constants.ICON_7;
+import static weather.pactera.com.weatherapp.Constants.ICON_8;
+import static weather.pactera.com.weatherapp.Constants.ICON_DAY;
 import static weather.pactera.com.weatherapp.Constants.METRIC;
+import static weather.pactera.com.weatherapp.Constants.WEATHER;
 
 public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
     private WeatherService weatherService;
@@ -37,13 +43,14 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
 
                     @Override
                     public void onNext(WeatherModel weatherModel) {
-                        Log.i("Subscripter", "onNext: success response received");
                         getView().updateWeatherStatus(weatherModel);
+                        Log.i(WEATHER, "onNext: success response received");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i("Subscripter", "onError: ");
+                        getView().updateError();
+                        Log.e(WEATHER, "onError: Error response received " + e);
                     }
 
                     @Override
@@ -55,7 +62,6 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
 
     public  String getWeatherIcon(WeatherModel weatherModel){
 
-
         int actualId = weatherModel.getWeather().get(0).getId();
         long sunrise = weatherModel.getSys().getSunrise() * 1000;
         long sunset = weatherModel.getSys().getSunset() * 1000;
@@ -65,29 +71,26 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
         if(actualId == 800){
             long currentTime = new Date().getTime();
             if(currentTime>=sunrise && currentTime<sunset) {
-                icon = "&#xf00d;";
+                icon = ICON_DAY;
             } else {
-                icon = "&#xf02e;";
+                icon = DEFAULT_ICON;
             }
         } else {
             switch(id) {
-                case 2 : icon = "&#xf01e;";
+                case 2 : icon = ICON_2;
                     break;
-                case 3 : icon = "&#xf01c;";
+                case 3 : icon = ICON_3;
                     break;
-                case 7 : icon = "&#xf014;";
+                case 7 : icon = ICON_7;
                     break;
-                case 8 : icon = "&#xf013;";
+                case 8 : icon = ICON_8;
                     break;
-                case 6 : icon = "&#xf01b;";
+                case 6 : icon = ICON_6;
                     break;
-                case 5 : icon = "&#xf019;";
+                case 5 : icon = ICON_5;
                     break;
             }
         }
         return icon;
     }
-
-
-
 }

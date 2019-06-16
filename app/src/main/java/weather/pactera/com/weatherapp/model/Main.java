@@ -11,6 +11,4 @@ public class Main implements Serializable{
 
     private String pressure;
 
-    private String humidity;
-
 }

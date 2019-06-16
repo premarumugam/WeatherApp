@@ -5,4 +5,6 @@ import weather.pactera.com.weatherapp.model.WeatherModel;
 public interface WeatherView {
 
     void updateWeatherStatus(WeatherModel weatherModel);
+
+    void updateError();
 }
