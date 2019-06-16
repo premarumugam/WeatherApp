@@ -10,4 +10,6 @@ public class Weather implements Serializable{
     private String main;
 
     private String icon;
+
+    private String id;
 }

@@ -13,6 +13,8 @@ public class WeatherModel implements Serializable{
 
     private String name;
 
+    private long dt;
+
     private List<Weather> weather;
 
     private Main main;

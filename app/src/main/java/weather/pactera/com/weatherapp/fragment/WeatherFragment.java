@@ -25,6 +25,7 @@ public class WeatherFragment extends Fragment implements WeatherView{
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    public static final int LOC = 0;
 
 
     @Inject
@@ -33,6 +34,20 @@ public class WeatherFragment extends Fragment implements WeatherView{
     @BindView(R.id.city_field)
     TextView cityTextView;
 
+    @BindView(R.id.current_temperature_field)
+    TextView currentTemperatureView;
+
+    @BindView(R.id.pressure_field)
+    TextView pressureFieldView;
+
+    @BindView(R.id.humidity_field)
+    TextView humidityFieldView;
+
+    @BindView(R.id.details_field)
+    TextView detailsFieldView;
+
+    @BindView(R.id.weather_icon)
+    TextView weatherIconView;
 
     @Override
     public void onAttach(Context context) {
@@ -65,6 +80,11 @@ public class WeatherFragment extends Fragment implements WeatherView{
 
     public void updateWeatherStatus(WeatherModel weatherModel){
         cityTextView.setText(weatherModel.getName());
+        currentTemperatureView.setText(weatherModel.getMain().getTemp());
+        pressureFieldView.setText("Pressure: " + weatherModel.getMain().getPressure() + " hPa");
+        humidityFieldView.setText("Humidity: " + weatherModel.getMain().getHumidity() + " %");
+        detailsFieldView.setText(weatherModel.getWeather().get(LOC).getMain());
+        //weatherIconView.setText(weatherFragmentPresenter.getWeatherIcon(weatherModel));
     }
 
 }
