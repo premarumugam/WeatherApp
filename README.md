@@ -26,3 +26,14 @@ The project is build using MVP pattern where the presenters are completely teste
 
 Retrofit with Rx is used for making service calls and observable pattern is used for rendering the UI or presenting error in the fragment.
 The application works in offline mode by leveraging file cache available in okHttp libraries.The app is completely coverd by Unit test cases by making use of Mockito library.
+
+## Development:
+Download the repo :
+git clone https://github.com/premarumugam/WeatherApp.git
+
+File -> open -> Android studio project
+
+Build test cases:
+./gradlew build
+
+The application is build using Java8.
