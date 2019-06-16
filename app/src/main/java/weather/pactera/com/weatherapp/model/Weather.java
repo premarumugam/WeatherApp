@@ -11,5 +11,5 @@ public class Weather implements Serializable{
 
     private String icon;
 
-    private String id;
+    private int id;
 }

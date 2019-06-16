@@ -1,8 +1,10 @@
 package weather.pactera.com.weatherapp.fragment;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +51,15 @@ public class WeatherFragment extends Fragment implements WeatherView{
     @BindView(R.id.weather_icon)
     TextView weatherIconView;
 
+    Typeface weatherFont;
+
     @Override
     public void onAttach(Context context) {
         ((AppController) context.getApplicationContext()).getAppComponent().inject(this);
         weatherFragmentPresenter.setView(this);
         super.onAttach(context);
     }
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -72,9 +77,11 @@ public class WeatherFragment extends Fragment implements WeatherView{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, rootView);
         int posistion = getArguments().getInt(ARG_SECTION_NUMBER);
         weatherFragmentPresenter.getWeatherForCity("Melbourne");
-        ButterKnife.bind(this, rootView);
+        weatherFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
+        weatherIconView.setTypeface(weatherFont);
         return rootView;
     }
 
@@ -84,7 +91,7 @@ public class WeatherFragment extends Fragment implements WeatherView{
         pressureFieldView.setText("Pressure: " + weatherModel.getMain().getPressure() + " hPa");
         humidityFieldView.setText("Humidity: " + weatherModel.getMain().getHumidity() + " %");
         detailsFieldView.setText(weatherModel.getWeather().get(LOC).getMain());
-        //weatherIconView.setText(weatherFragmentPresenter.getWeatherIcon(weatherModel));
+        weatherIconView.setText(Html.fromHtml(weatherFragmentPresenter.getWeatherIcon(weatherModel)));
     }
 
 }

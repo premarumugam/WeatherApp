@@ -18,4 +18,6 @@ public class WeatherModel implements Serializable{
     private List<Weather> weather;
 
     private Main main;
+
+    private Sys sys;
 }

@@ -53,7 +53,13 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
                 });
     }
 
-    public  String setWeatherIcon(int actualId, long sunrise, long sunset){
+    public  String getWeatherIcon(WeatherModel weatherModel){
+
+
+        int actualId = weatherModel.getWeather().get(0).getId();
+        long sunrise = weatherModel.getSys().getSunrise() * 1000;
+        long sunset = weatherModel.getSys().getSunset() * 1000;
+
         int id = actualId / 100;
         String icon = "";
         if(actualId == 800){
