@@ -2,18 +2,23 @@ package weather.pactera.com.weatherapp.presenter;
 
 import android.util.Log;
 
+import java.net.ConnectException;
 import java.util.Date;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 import weather.pactera.com.weatherapp.model.WeatherModel;
 import weather.pactera.com.weatherapp.service.WeatherService;
 import weather.pactera.com.weatherapp.view.WeatherView;
 
+import static weather.pactera.com.weatherapp.Constants.API_DOWN;
 import static weather.pactera.com.weatherapp.Constants.API_KEY;
 import static weather.pactera.com.weatherapp.Constants.DEFAULT_ICON;
+import static weather.pactera.com.weatherapp.Constants.ERROR_CHECK_CITY;
+import static weather.pactera.com.weatherapp.Constants.HTTP_ERROR;
 import static weather.pactera.com.weatherapp.Constants.ICON_2;
 import static weather.pactera.com.weatherapp.Constants.ICON_3;
 import static weather.pactera.com.weatherapp.Constants.ICON_5;
@@ -43,14 +48,21 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
 
                     @Override
                     public void onNext(WeatherModel weatherModel) {
+                        getView().dismissLoadingBar();
+
                         getView().updateWeatherStatus(weatherModel);
-                        Log.i(WEATHER, "onNext: success response received");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        getView().updateError();
-                        Log.e(WEATHER, "onError: Error response received " + e);
+                        getView().dismissLoadingBar();
+                        if (e instanceof ConnectException){
+                            getView().updateError(API_DOWN);
+                        } else if (e instanceof HttpException){
+                            getView().updateError(HTTP_ERROR);
+                        } else {
+                            getView().updateError(ERROR_CHECK_CITY);
+                        }
                     }
 
                     @Override
@@ -60,7 +72,7 @@ public class WeatherFragmentPresenter extends BasePresenter<WeatherView>{
                 });
     }
 
-    public  String getWeatherIcon(WeatherModel weatherModel){
+    public String getWeatherIcon(WeatherModel weatherModel){
 
         int actualId = weatherModel.getWeather().get(0).getId();
         long sunrise = weatherModel.getSys().getSunrise() * 1000;

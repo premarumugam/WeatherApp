@@ -6,11 +6,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.net.ConnectException;
 import java.util.Arrays;
 
 import io.reactivex.Observable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
+import retrofit2.Response;
 import weather.pactera.com.weatherapp.model.Sys;
 import weather.pactera.com.weatherapp.model.Weather;
 import weather.pactera.com.weatherapp.model.WeatherModel;
@@ -22,7 +27,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static weather.pactera.com.weatherapp.Constants.API_DOWN;
 import static weather.pactera.com.weatherapp.Constants.API_KEY;
+import static weather.pactera.com.weatherapp.Constants.ERROR_CHECK_CITY;
+import static weather.pactera.com.weatherapp.Constants.HTTP_ERROR;
 import static weather.pactera.com.weatherapp.Constants.ICON_2;
 import static weather.pactera.com.weatherapp.Constants.ICON_3;
 import static weather.pactera.com.weatherapp.Constants.ICON_5;
@@ -46,8 +54,8 @@ public class WeatherFragmentPresenterTest {
     @Before
     public void setUp() throws Exception {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-        presenter = new WeatherFragmentPresenter(weatherService);
-        presenter.setView(weatherView);
+        this.presenter = new WeatherFragmentPresenter(weatherService);
+        this.presenter.setView(weatherView);
     }
 
     @Test
@@ -174,7 +182,8 @@ public class WeatherFragmentPresenterTest {
         when(weatherService.getWeather(MELBOURNE, METRIC, API_KEY)).thenReturn(Observable.just(weatherModel));
 
         presenter.getWeatherForCity(MELBOURNE);
-        verify(weatherView).updateWeatherStatus(weatherModel);
+
+        verify(weatherService).getWeather(MELBOURNE, METRIC, API_KEY);
     }
 
     @Test
@@ -182,11 +191,46 @@ public class WeatherFragmentPresenterTest {
 
         WeatherModel weatherModel = WeatherModel.builder()
                 .build();
-        when(weatherService.getWeather(MELBOURNE, METRIC, API_KEY)).thenReturn(Observable.error( new RuntimeException()));
+        when(weatherService.getWeather(MELBOURNE, METRIC, API_KEY)).thenReturn(Observable.error(new Throwable()));
+
+        presenter.getWeatherForCity(MELBOURNE);
+
+        verify(weatherService).getWeather(MELBOURNE, METRIC, API_KEY);
+        verify(weatherView, never()).updateError(HTTP_ERROR);
+        verify(weatherView, never()).updateWeatherStatus(weatherModel);
+    }
+
+    @Test
+    public void shouldMakeNetworkCallToFetchWeatherAndUpdateUIzzWithHttpErrorMessage() throws Exception {
+
+        WeatherModel weatherModel = WeatherModel.builder()
+                .build();
+        when(weatherService.getWeather(MELBOURNE, METRIC, API_KEY)).thenReturn(Observable.error(new HttpException(Response.error(403,
+                ResponseBody.create(
+                        MediaType.parse("application/json"),
+                        "{\"error\":[\"message\"]}"
+                )))));
+
+        presenter.getWeatherForCity(MELBOURNE);
+
+        verify(weatherService).getWeather(MELBOURNE, METRIC, API_KEY);
+        verify(weatherView, never()).updateError(API_DOWN);
+        verify(weatherView, never()).updateWeatherStatus(weatherModel);
+    }
+
+    @Test
+    public void shouldMakeNetworkCallToFetchWeatherAndUpdateUIWithApiErrorMessage() throws Exception {
+
+        WeatherModel weatherModel = WeatherModel.builder()
+                .build();
+
+
+        when(weatherService.getWeather(MELBOURNE, METRIC, API_KEY)).thenReturn(Observable.error(new ConnectException("Network is not available")));
 
         presenter.getWeatherForCity(MELBOURNE);
 
         verify(weatherService).getWeather(MELBOURNE, METRIC, API_KEY);
         verify(weatherView, never()).updateWeatherStatus(weatherModel);
+        verify(weatherView, never()).updateError(ERROR_CHECK_CITY);
     }
 }

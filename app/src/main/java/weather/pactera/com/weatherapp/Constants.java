@@ -4,6 +4,8 @@ package weather.pactera.com.weatherapp;
 public class Constants {
 
     public static final String BASE_URI = "http://api.openweathermap.org";
+    public static final String API_DOWN = "Our Api is down, please try again later";
+    public static final String HTTP_ERROR = "We have difficulty connecting to our server, please try again later";
     public static final String URL_WEATHER_CITY = "/data/2.5/weather";
     public static final String METRIC = "metric";
     public static final String WEATHER = "Weather Service";

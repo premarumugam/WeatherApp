@@ -97,7 +97,6 @@ public class WeatherFragment extends Fragment implements WeatherView{
     }
 
     public void updateWeatherStatus(WeatherModel weatherModel){
-        progressBar.setVisibility(View.GONE);
         DateFormat df = DateFormat.getDateTimeInstance();
         updatedDateView.setText(df.format(new Date(weatherModel.getDt() * 1000)));
         cityTextView.setText(weatherModel.getName());
@@ -108,9 +107,12 @@ public class WeatherFragment extends Fragment implements WeatherView{
         weatherIconView.setText(Html.fromHtml(weatherFragmentPresenter.getWeatherIcon(weatherModel)));
     }
 
-    public void updateError(){
+    public void updateError(String errorMessage){
+        Toast.makeText(this.getContext(), errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    public void dismissLoadingBar(){
         progressBar.setVisibility(View.GONE);
-        Toast.makeText(this.getContext(), ERROR_CHECK_CITY, Toast.LENGTH_LONG).show();
     }
 
 }

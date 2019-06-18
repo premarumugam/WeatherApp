@@ -6,5 +6,7 @@ public interface WeatherView {
 
     void updateWeatherStatus(WeatherModel weatherModel);
 
-    void updateError();
+    void updateError(String errorMessage);
+
+    void dismissLoadingBar();
 }
